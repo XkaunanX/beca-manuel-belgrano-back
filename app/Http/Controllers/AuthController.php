@@ -63,9 +63,7 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
         }
 
 
-        # $user = User::with('roles')->find(Auth::id());
-        # $user = Auth::user()->load('roles'); Despues de obtenerlo
-        $user = Auth::user(); # Obtener el usuario actualmente autenticado
+        $user = Auth::user()->load('roles');
         $token = $user->createToken("auth_token")->plainTextToken; # Genera el token de acceso personal
 
         return response()->json([ # Deveria devolver los roles
@@ -79,6 +77,7 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
     // Profile (user)
     public function profile(Request $request)
     {
+        $user = $request->user()->load('roles');
         return response()->json([
             "success" => true,
             "message" => "Authenticated user data",

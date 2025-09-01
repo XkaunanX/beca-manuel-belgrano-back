@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory; # Permite usar factories 
 use Illuminate\Foundation\Auth\User as Authenticatable; # Clase base de Laravel para usuarios que pueden autenticarse
 use Illuminate\Notifications\Notifiable; # Permite enviar notificaciones al usuario (email, SMS, etc.)
 use Laravel\Sanctum\HasApiTokens; # Permite manejar tokens de API con Sanctum
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable # Herencia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable; # Uso de traits -> mecanismo que permite reutilizar codigo en varias clases sin necesidad de herencia
+    use HasApiTokens, HasFactory, Notifiable, HasRoles; # Uso de traits -> mecanismo que permite reutilizar codigo en varias clases sin necesidad de herencia
 
     /**
      * The attributes that are mass assignable.

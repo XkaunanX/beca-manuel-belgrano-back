@@ -47,7 +47,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => null, /*<- Para hacer que se expire el token*/
 
     /*
     |--------------------------------------------------------------------------

@@ -27,15 +27,23 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 "errors" => $validator->errors(), # Listado de tallado de los errores por campo
             ], 422); # 422 Unprocessable Entity -> no cumplen las reglas de negocio/validacion
         }
+
         $user = User::create([ # Creo un nuevo usuario
             "name" => $request->name, # Utilizo los campos de la request 
             "email" => $request->email,
             "password" => Hash::make($request->password), # Guardo la password hasheada
         ]);
+        $user->assignRole('user'); # Hay que crear el rol en el seeder
+
         return response()->json([ # Respuesta
             "success" => true,
             "message" => "User registered successfully",
-            "user" => $user, # Devuelvo el usuario
+            "user" => [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "roles" => $user->roles->pluck('name'),
+            ],
         ], 201); // HTTP 201 Created -> el recurso fue creado correctamente
     }
 
@@ -70,7 +78,12 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
             "success" => true,
             "message" => "User logged in successfully",
             "token" => $token,
-            "user" => $user,
+            "user" => [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "roles" => $user->roles->pluck('name'),
+            ],
         ], 200); # 200 OK -> La operacion tuvo exito
     }
 
@@ -81,7 +94,12 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
         return response()->json([
             "success" => true,
             "message" => "Authenticated user data",
-            "user" => $request->user(),
+            "user" => [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "roles" => $user->roles->pluck('name'),
+            ],
         ], 200); # 200 OK -> La operacion tuvo exito
     }
 

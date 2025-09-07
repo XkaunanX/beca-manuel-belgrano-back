@@ -47,4 +47,10 @@ class User extends Authenticatable # Herencia
             'password' => 'hashed',
         ];
     }
+
+    // Un usuario puede tener muchas inscripciones
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
+    }
 }

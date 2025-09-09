@@ -48,9 +48,21 @@ class User extends Authenticatable # Herencia
         ];
     }
 
-    // Un usuario puede tener muchas inscripciones
+    // Un User tiene un solo Scholarship
+    public function scholarship()
+    {
+        return $this->hasOne(Scholarship::class);
+    }
+
+    // Un User puede tener muchas Registration
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    // Un User puede tener muchas Renewal
+    public function renewals()
+    {
+        return $this->hasMany(Renewal::class);
     }
 }

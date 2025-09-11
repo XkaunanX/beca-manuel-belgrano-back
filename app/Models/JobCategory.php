@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class JobCategory extends Model
 {
-    //
+    protected $fillable = ['name'];
+    public $timestamps = true;
 }

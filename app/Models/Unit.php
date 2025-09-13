@@ -19,4 +19,9 @@ class Unit extends Model
     public function unitCareers(){
         return $this->hasMany(UnitCareer::class);
     }
+
+    //Una Unit tiene muchos AcademicPlans
+    public function academicPlans(){
+        return $this->hasMany(AcademicPlan::class); 
+    }
 }

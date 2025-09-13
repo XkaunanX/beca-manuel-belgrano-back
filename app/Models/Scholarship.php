@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Scholarship extends Model
 {
     
-    protected $fillable = ['name', 'last_name', 'date_birth', 'cuil', 'cuit', 'childen'];
+    protected $fillable = ['name', 'last_name', 'date_birth', 'cuil', 'cuit', 'childen', 'social_coverage'];
 
     // Un Scholarship tiene solo un User
     public function user(){
@@ -45,9 +45,41 @@ class Scholarship extends Model
     }
     
     // Un Scolarship tiene un unico CivilStatus
+    public function civilStatus()
+    {
+        return $this->belongsTo(CivilStatus::class);
+    }
 
+    // Un scolarship tiene un VulnerableGroup
+    public function vulnerableGroup()
+    {
+        return $this->belongsTo(VulnerableGroup::class);
+    }
+    // Un Scolarship tiene muchos Payment
 
+    public function scholarshipPayments()
+    {
+        return $this->hasMany(Payment::class);
+    }   
 
+    // Un scolarship tiene un BankBranch
+    public function bankBranch()
+    {
+         return $this->belongsTo(BankBranch::class);
+    }
+
+    // Un Scolarship tiene muchos Assets
+    public function assets()
+    {
+        return $this->hasMany(Asset::class);    
+    }
+    
+    //Un scolarship tiene muchos FamilyMembers
+    public function familyMembers()
+    {
+        return $this->hasMany(FamilyMember::class);
+
+    }
     
 
 }

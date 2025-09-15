@@ -14,6 +14,10 @@ class Scholarship extends Model
         return $this->belongsTo(User::class);
     }
 
+     protected $casts = [
+        'date_birth' => 'datetime',
+    ];
+
     // Un Scholarship puede tener muchas ScolarshipAcademicPlan
     public function scholarshipAcademicPlans(){
         return $this->hasMany(ScholarshipAcademicPlan::class);
@@ -23,4 +27,27 @@ class Scholarship extends Model
     public function services(){
         return $this->hasMany(Service::class);
     }
+
+    // Un scolarship puede tener muchos jobs
+    public function jobs(){
+        return $this->hasMany(Job::class);
+    }   
+    // Un Scolarship se relaciona con un unico Gender
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
+    }
+
+    //Un Scolarship tiene una Nacionalidad
+    public function nationality()
+    {
+        return $this->belongsTo(Nationality::class);
+    }
+    
+    // Un Scolarship tiene un unico CivilStatus
+
+
+
+    
+
 }

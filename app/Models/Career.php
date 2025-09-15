@@ -9,7 +9,7 @@ class Career extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
-    // Una Career puede tener muchas UnitCareer
+    // Una Career puede tener muchas UnitCareers
     public function unitCareers(){
         return $this->hasMany(UnitCareer::class);  
     }

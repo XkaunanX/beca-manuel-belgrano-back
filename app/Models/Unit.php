@@ -9,7 +9,7 @@ class Unit extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
-    // Una Unit pertenece a una Institution
+    // Una Unit pertenece a una Institutions
     public function institution()
     {
         return $this->belongsTo(Institution::class);

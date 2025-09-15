@@ -10,7 +10,7 @@ class BankBranch extends Model
 
     public $timestamps = true;
 
-    // Un BankBranch se relaciona con una Province
+    // Un BankBranch se relaciona con una Provinces
     public function province(){
         return $this->belongsTo(Province::class);
     }

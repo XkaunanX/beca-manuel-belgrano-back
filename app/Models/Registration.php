@@ -32,7 +32,7 @@ class Registration extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Una Registration pertenece a una Call
+    // Una Registration pertenece a una Calls
     public function call()
     {
         return $this->belongsTo(Call::class);

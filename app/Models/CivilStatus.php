@@ -9,7 +9,7 @@ class CivilStatus extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
-    // Un CivilStatus puede tenerlo muchos Scolarship
+    // Un CivilStatus puede tenerlo muchos Scolarships
     public function scholarships(){
         return $this->hasMany(Scholarship::class);
     }

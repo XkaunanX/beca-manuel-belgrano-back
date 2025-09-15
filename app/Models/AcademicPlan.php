@@ -29,7 +29,7 @@ class AcademicPlan extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    // Un academicPlan puede tener muchos ScholarshipAcademicPlan
+    // Un academicPlan puede tener muchos ScholarshipAcademicPlans
     public function scholarshipAcademicPlans(){
         return $this->hasMany(ScholarshipAcademicPlan::class);
     }

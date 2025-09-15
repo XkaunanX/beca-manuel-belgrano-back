@@ -13,7 +13,7 @@ class UnitCareer extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    // UnitCareer pertenece a una sola Career
+    // UnitCareer pertenece a una sola Careers
     public function career(){
         return $this->belongsTo(Career::class);
     }

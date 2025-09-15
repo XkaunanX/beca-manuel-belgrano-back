@@ -9,12 +9,12 @@ class Job extends Model
     protected $fillable = ['name', 'type', 'income', 'description'];
     public $timestamps = true;
 
-    // Un Job pertenece a un Scholarship
+    // Un Job pertenece a un Scholarships
     public function scholarship(){
         return $this->belongsTo(Scholarship::class);    
     }
 
-    //Un Job pertenece a un FamilyMember
+    // Un Job pertenece a un FamilyMember
     public function familyMember(){
         return $this->belongsTo(FamilyMember::class);   
     }

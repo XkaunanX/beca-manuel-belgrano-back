@@ -18,7 +18,7 @@ class ScholarshipAcademicPlan extends Model
         return $this->belongsTo(AcademicPlan::class);
     }
     
-    // Una ScholarshipAcademicPlan pertenece a una Scholarship
+    // Una ScholarshipAcademicPlan pertenece a una Scholarships
     public function scholarship(){
         return $this->belongsTo(Scholarship::class);
     }

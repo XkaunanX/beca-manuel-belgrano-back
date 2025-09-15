@@ -8,10 +8,10 @@ class Gender extends Model
 {
     protected $fillable = ['name'];
     public $timestamps = true;
-    //Un Gender tiene muchos Scholarship
+
+    //Un Gender tiene muchos Scholarships
     public function scholarships()
     {
         return $this->hasMany(Scholarship::class);
     }
-
 }

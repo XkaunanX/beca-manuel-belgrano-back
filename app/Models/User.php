@@ -60,7 +60,7 @@ class User extends Authenticatable # Herencia
         return $this->hasMany(Registration::class);
     }
 
-    // Un User puede tener muchas Renewal
+    // Un User puede tener muchas Renewals 
     public function renewals()
     {
         return $this->hasMany(Renewal::class);

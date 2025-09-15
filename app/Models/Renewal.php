@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Renewal extends Model
 {
-    // Campos que se pueden asignar masivamente
+    // Campos que se pueden asignar masivamentes
     protected $fillable = [
         'approved',
     ];

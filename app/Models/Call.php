@@ -36,7 +36,7 @@ class Call extends Model
         return $this->hasMany(Registration::class);
     }
 
-    // Una Call puede tener muchas Renewal
+    // Una Call puede tener muchas Renewals
     public function renewal()
     {
         return $this->hasMany(Renewal::class);

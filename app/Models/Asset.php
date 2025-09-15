@@ -8,7 +8,8 @@ class Asset extends Model
 {
     protected $fillable = ['name', 'type'];
     public $timestamps = true;
-    //Un Asset pertenece a un Scholarship
+
+    //Un Asset pertenece a un Scholarships
     public function scholarship(){
         return $this->belongsTo(Scholarship::class);    
     }
@@ -16,7 +17,5 @@ class Asset extends Model
     //Un Asset pertenece a un FamilyMember
     public function familyMember(){
         return $this->belongsTo(FamilyMember::class);   
-    }
-
-    
+    } 
 }

@@ -9,7 +9,7 @@ class Institution extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
-    // Una Institution puede tener muchas Units
+    // Una Institution puede tener muchas Unit
     public function units()
     {
         return $this->hasMany(Unit::class);

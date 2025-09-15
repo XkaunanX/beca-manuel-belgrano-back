@@ -8,7 +8,8 @@ class FamilyMember extends Model
 {
     protected $fillable = ['name', 'last_name', 'social_coverage'];
     public $timestamps = true;
-    //Un FamilyMember tiene muchos Job
+
+    //Un FamilyMember tiene muchos Jobs
     public function jobs(){
         return $this->hasMany(Job::class);  
     }

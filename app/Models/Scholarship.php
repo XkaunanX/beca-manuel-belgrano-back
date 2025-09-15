@@ -50,13 +50,13 @@ class Scholarship extends Model
         return $this->belongsTo(CivilStatus::class);
     }
 
-    // Un scolarship tiene un VulnerableGroup
+    // Un scolarship tiene un VulnerableGroups
     public function vulnerableGroup()
     {
         return $this->belongsTo(VulnerableGroup::class);
     }
-    // Un Scolarship tiene muchos Payment
 
+    // Un Scolarship tiene muchos Payment
     public function scholarshipPayments()
     {
         return $this->hasMany(Payment::class);
@@ -80,6 +80,4 @@ class Scholarship extends Model
         return $this->hasMany(FamilyMember::class);
 
     }
-    
-
 }

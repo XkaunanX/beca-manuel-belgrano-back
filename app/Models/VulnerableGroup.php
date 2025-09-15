@@ -9,7 +9,7 @@ class VulnerableGroup extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
-//Un VulnerableGroup tiene muchos Scholarship
+    //Un VulnerableGroup tiene muchos Scholarship
     public function scholarships()
     {
         return $this->hasMany(Scholarship::class);  

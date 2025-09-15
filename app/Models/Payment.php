@@ -14,7 +14,7 @@ class Payment extends Model
         'date' => 'date',
     ];
 
-    // Un Payment pertenece a un Scholarship
+    // Un Payment pertenece a un Scholarships
     public function scholarship(){
         return $this->belongsTo(Scholarship::class);    
     }

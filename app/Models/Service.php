@@ -14,7 +14,7 @@ class Service extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    // Un Service pertenece a un solo Scolarship
+    // Un Service pertenece a un solo Scolarships
     public function scholarship(){
         return $this->belongsTo(Scholarship::class);
     }

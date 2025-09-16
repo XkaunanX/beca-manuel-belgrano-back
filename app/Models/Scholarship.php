@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Scholarship extends Model
 {
     
-    protected $fillable = ['name', 'last_name', 'date_birth', 'cuil', 'cuit', 'childen', 'social_coverage'];
+    protected $fillable = ['name', 'last_name', 'date_birth', 'cuil', 'cuit', 'children', 'social_coverage'];
 
     // Un Scholarship tiene solo un User
     public function user(){

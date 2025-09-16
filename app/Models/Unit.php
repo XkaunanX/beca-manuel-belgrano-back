@@ -15,13 +15,14 @@ class Unit extends Model
         return $this->belongsTo(Institution::class);
     }
 
-    // Una Unit puede tener muchas UnitCareers
-    public function unitCareers(){
-        return $this->hasMany(UnitCareer::class);
+    public function careers()
+    {
+        return $this->belongsToMany(Career::class, 'unit_career');
     }
 
     //Una Unit tiene muchos AcademicPlans
-    public function academicPlans(){
-        return $this->hasMany(AcademicPlan::class); 
+    public function academicPlans()
+    {
+        return $this->hasMany(AcademicPlan::class);
     }
 }

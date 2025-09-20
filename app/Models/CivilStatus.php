@@ -13,9 +13,4 @@ class CivilStatus extends Model
     public function scholarships(){
         return $this->hasMany(Scholarship::class);
     }
-
-    // Un CivilStatus puede tenerlo muchos FamilyMember
-    public function familyMembers(){
-        return $this->hasMany(FamilyMember::class);
-    }
 }

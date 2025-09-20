@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('social_coverage')->default(false);
 
             // Relacion con Scholarship
-            $table->foreignId('scholarship_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('scholarship_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });

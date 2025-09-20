@@ -29,8 +29,8 @@ class Scholarship extends Model
     }
 
     // Un scolarship puede tener muchos jobs
-    public function jobs(){
-        return $this->hasMany(Job::class);
+    public function Employments(){
+        return $this->hasMany(Employment::class);
     }   
     // Un Scolarship se relaciona con un unico Gender
     public function gender()
@@ -78,6 +78,5 @@ class Scholarship extends Model
     public function familyMembers()
     {
         return $this->hasMany(FamilyMember::class);
-
     }
 }

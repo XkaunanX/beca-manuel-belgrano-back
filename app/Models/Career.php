@@ -9,6 +9,7 @@ class Career extends Model
     protected $fillable = ['name'];
     public $timestamps = true;
 
+    // Una Career puede pertenecer a muchas Unit
     public function units()
     {
         return $this->belongsToMany(Unit::class, 'unit_career');

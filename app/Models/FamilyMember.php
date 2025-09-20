@@ -9,9 +9,14 @@ class FamilyMember extends Model
     protected $fillable = ['name', 'last_name', 'social_coverage'];
     public $timestamps = true;
 
+    public function scholarships()
+    {
+        return $this->belongsToMany(Scholarship::class, 'family_member_scholarship');
+    }
+
     //Un FamilyMember tiene muchos Jobs
-    public function jobs(){
-        return $this->hasMany(Job::class);  
+    public function Employments(){
+        return $this->hasMany(Employment::class);  
     }
 
     //Un FamilyMember tiene muchos Assets

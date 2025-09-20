@@ -35,7 +35,7 @@ class Scholarship extends Model
     // Un Scolarship se relaciona con un unico Gender
     public function gender()
     {
-        return $this->belongsTo(Gender::class);
+        return $this->belongsTo(Genre::class);
     }
 
     //Un Scolarship tiene una Nacionalidad

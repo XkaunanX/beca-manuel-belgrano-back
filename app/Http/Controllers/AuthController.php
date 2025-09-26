@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 # Importaciones (Pensar como clases con sus metodos)
 use App\Models\User; # Modelo User
+use App\Models\Scholarship;
+use App\Models\Genre;
 use Illuminate\Http\Request; # Clase Request -> Representa la peticion HTTP
 use Illuminate\Support\Facades\Hash; # Permite trabajar con contraseñas encriptadas 
 use Illuminate\Support\Facades\Auth; # Maneja la autenticacion de usuarios
@@ -15,36 +17,85 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
     // Register (name, email, password, confirm_password)
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [ # Validator -> valida la peticion 
+        $validator = Validator::make($request->all(), [
             "name" => "required|string|max:255",
             "email" => "required|email|unique:users,email",
             "password" => "required|min:6|confirmed",
+            "nombre" => "required|string|max:255",
+            "apellido" => "required|string|max:255",
+            "cuitCuil" => "required|digits:11|unique:scholarships,cuit",
+            "genero" => [
+                "required",
+                "string",
+                function ($attribute, $value, $fail) {
+                    if (!Genre::where('name', $value)->exists()) {
+                        $fail("El genero seleccionado es invalido.");
+                    }
+                }
+            ],
+        ], [
+            "email.unique" => "El email ya está registrado. Por favor usá otro.",
+            "cuitCuil.unique" => "El CUIT/CUIL ya existe en el sistema.",
         ]);
-        if ($validator->fails()) { # La validacion fallo
-            return response()->json([  # Respuesta
-                "success" => false, # Devuelvo una bandera booleana
-                "message" => "Validation errors", # Texto general de error
-                "errors" => $validator->errors(), # Listado de tallado de los errores por campo
-            ], 422); # 422 Unprocessable Entity -> no cumplen las reglas de negocio/validacion
+
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "message" => "Validation errors",
+                "errors" => $validator->errors(),
+            ], 422);
         }
 
-        $user = User::create([ # Creo un nuevo usuario
-            "name" => $request->name, # Utilizo los campos de la request 
-            "email" => $request->email,
-            "password" => Hash::make($request->password), # Guardo la password hasheada
-        ]);
-        $user->assignRole('user'); # Hay que crear el rol en el seeder
+        try {
+            // Creamos el usuario
+            $user = User::create([
+                "name" => $request->name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+            ]);
 
-        return response()->json([ # Respuesta
-            "success" => true,
-            "message" => "User registered successfully",
-            "user" => [
-                "id" => $user->id,
-                "name" => $user->name,
-                "email" => $user->email,
-                "roles" => $user->roles->pluck('name'),
-            ],
-        ], 201); // HTTP 201 Created -> el recurso fue creado correctamente
+            // Obtenemos el id del genero
+            $genre = Genre::where('name', $request->genero)->first();
+            if (!$genre) {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Genero invalido"
+                ], 422);
+            }
+
+            // Creamos el scholarship con genre_id
+            $scholarship = Scholarship::create([
+                "user_id" => $user->id,
+                "name" => $request->nombre,
+                "last_name" => $request->apellido,
+                "cuit" => $request->cuitCuil,
+                "genre_id" => $genre->id,
+            ]);
+
+            return response()->json([
+                "success" => true,
+                "message" => "User and scholarship registered successfully",
+                "user" => [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                    "email" => $user->email,
+                    "roles" => $user->roles->pluck('name'),
+                ],
+                "scholarship" => [
+                    "id" => $scholarship->id,
+                    "name" => $scholarship->name,
+                    "last_name" => $scholarship->last_name,
+                    "cuit" => $scholarship->cuit,
+                    "genre_id" => $scholarship->genre_id,
+                ],
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Error creating user",
+                "error" => $e->getMessage(),
+            ], 500);
+        }
     }
 
     // Login (email, password)

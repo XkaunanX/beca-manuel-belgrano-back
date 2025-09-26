@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('end_date')->after('start_date');
             $table->float('socioeconomic_points_limit')->after('end_date');
             $table->boolean('residency_required')->after('socioeconomic_points_limit');
+            $table->date('inscription_start')->after('residency_required');
+            $table->date('inscription_end')->after('inscription_start');
         });
     }
 
@@ -33,7 +35,9 @@ return new class extends Migration
                 'start_date',
                 'end_date',
                 'socioeconomic_points_limit',
-                'residency_required'
+                'residency_required',
+                'inscription_start',
+                'inscription_end'
             ]);
         });
     }

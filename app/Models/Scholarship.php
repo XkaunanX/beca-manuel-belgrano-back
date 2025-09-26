@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Scholarship extends Model
 {
     
-    protected $fillable = ['name', 'last_name', 'date_birth', 'cuil', 'cuit', 'children', 'social_coverage'];
+    protected $fillable = ['user_id', 'genre_id', 'name', 'last_name', 'date_birth', 'cuil', 'cuit', 'children', 'social_coverage'];
 
     // Un Scholarship tiene solo un User
     public function user(){
@@ -35,7 +35,7 @@ class Scholarship extends Model
     // Un Scolarship se relaciona con un unico Gender
     public function gender()
     {
-        return $this->belongsTo(Gender::class);
+        return $this->belongsTo(Genre::class);
     }
 
     //Un Scolarship tiene una Nacionalidad

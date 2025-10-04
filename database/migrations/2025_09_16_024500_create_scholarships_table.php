@@ -20,8 +20,8 @@ return new class extends Migration
             $table->date('date_birth')->nullable();
             $table->string('cuil')->nullable();
             $table->string('cuit')->nullable();
-            $table->integer('children')->default(0);
-            $table->boolean('social_coverage')->default(false);
+            $table->integer('children')->nullable()->default(0);
+            $table->boolean('social_coverage')->nullable()->default(false);
 
             // Relaciones (FK)
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

@@ -90,6 +90,8 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 ],
             ], 201);
         } catch (\Exception $e) {
+            error_log('Error creating user: ' . $e->getMessage());
+            error_log($e->getTraceAsString()); // stack trace completo
             return response()->json([
                 "success" => false,
                 "message" => "Error creating user",

@@ -10,6 +10,7 @@ use App\Http\Controllers\CivilStatusController;
 use App\Http\Controllers\VulnerableGroupController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InscripcionController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -19,6 +20,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/inscripciones', [InscripcionController::class, 'store']);
+});
+
+Route::get('/provinces/{provinceId}/cities', [ProvinceController::class, 'cities']);
 
 Route::get('/genres', [GenreController::class, 'index']);
 Route::get('/nationalities', [NationalityController::class, 'index']);

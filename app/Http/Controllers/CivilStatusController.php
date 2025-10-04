@@ -9,6 +9,8 @@ class CivilStatusController extends Controller
 {
     public function index()
     {
-        return response()->json(CivilStatus::pluck('name'));
+        $civilStatuses = CivilStatus::select('id', 'name')->get();
+
+        return response()->json($civilStatuses);
     }
 }

@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
         GenreSeeder::class,
         CivilStatusSeeder::class,
         NationalitySeeder::class,
+        ProvinceSeeder::class,
+        VulnerableGroupSeeder::class
     ]);
     }
 }

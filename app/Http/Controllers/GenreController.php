@@ -8,6 +8,8 @@ class GenreController extends Controller
 {
     public function index()
     {
-        return response()->json(Genre::pluck('name'));
+        $genres = Genre::select('id', 'name')->get();
+
+        return response()->json($genres);
     }
 }

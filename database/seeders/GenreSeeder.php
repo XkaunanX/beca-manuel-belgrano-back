@@ -11,7 +11,7 @@ class GenreSeeder extends Seeder
      */
     public function run(): void
     {
-        $genres = ['Masculino', 'Femenino', 'No Binario', 'Transgénero', 'Otro'];
+        $genres = ['Masculino', 'Femenino', 'No Binario', 'Prefiero no decir', 'Otro'];
 
         foreach ($genres as $genreName) {
             Genre::firstOrCreate(['name' => $genreName]);

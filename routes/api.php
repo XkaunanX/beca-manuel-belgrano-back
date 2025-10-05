@@ -11,13 +11,13 @@ use App\Http\Controllers\VulnerableGroupController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\InstitutionController;
 
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    
 });
 
 Route::get('/genres', [GenreController::class, 'index']);

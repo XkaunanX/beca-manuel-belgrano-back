@@ -17,17 +17,17 @@ return new class extends Migration
             // Campos basicos
             $table->string('name');
             $table->string('last_name');
-            $table->date('date_birth');
+            $table->date('date_birth')->nullable();
             $table->string('cuil')->nullable();
             $table->string('cuit')->nullable();
-            $table->integer('children')->default(0);
-            $table->boolean('social_coverage')->default(false);
+            $table->integer('children')->nullable()->default(0);
+            $table->boolean('social_coverage')->nullable()->default(false);
 
             // Relaciones (FK)
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('genre_id')->constrained('genres')->onDelete('restrict');
-            $table->foreignId('nationality_id')->constrained()->onDelete('restrict');
-            $table->foreignId('civil_status_id')->constrained()->onDelete('restrict');
+            $table->foreignId('genre_id')->nullable()->constrained('genres')->onDelete('restrict');
+            $table->foreignId('nationality_id')->nullable()->constrained()->onDelete('restrict');
+            $table->foreignId('civil_status_id')->nullable()->constrained()->onDelete('restrict');
             $table->foreignId('vulnerable_group_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('bank_branch_id')->nullable()->constrained()->onDelete('set null');
 

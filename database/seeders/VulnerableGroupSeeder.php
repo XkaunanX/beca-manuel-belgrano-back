@@ -15,6 +15,7 @@ class VulnerableGroupSeeder extends Seeder
         $groups = [
             'Discapacidad',
             'Población indígena',
+            'Ninguno'
         ];
 
         foreach ($groups as $groupName) {

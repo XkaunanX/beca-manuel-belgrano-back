@@ -9,6 +9,8 @@ class InstitutionController extends Controller
 {
     public function index()
     {
-        return response()->json(Institution::pluck('name'));
+        $institutions = Institution::select('id', 'name')->get();
+
+        return response()->json($institutions);
     }
 }

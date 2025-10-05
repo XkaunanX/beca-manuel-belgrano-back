@@ -9,6 +9,8 @@ class NationalityController extends Controller
 {
     public function index()
     {
-        return response()->json(Nationality::pluck('name'));
+        $nationalities = Nationality::select('id', 'name')->get();
+
+        return response()->json($nationalities);
     }
 }

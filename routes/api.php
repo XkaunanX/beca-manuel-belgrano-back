@@ -11,6 +11,7 @@ use App\Http\Controllers\VulnerableGroupController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\ScholarshipController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inscripciones', [InscripcionController::class, 'store']);
+    Route::get('/scholarship', [ScholarshipController::class, 'getMyScholarData']);
 });
 
 Route::get('/provinces/{provinceId}/cities', [ProvinceController::class, 'cities']);

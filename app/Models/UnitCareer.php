@@ -6,15 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UnitCareer extends Model
 {
-    public $timestamps = true;
+    // Es **obligatorio** si la tabla no es plural
+    protected $table = 'unit_career';
 
-    // UnitCareer pertenece a una sola Unit
-    public function unit(){
-        return $this->belongsTo(Unit::class);
-    }
-
-    // UnitCareer pertenece a una sola Careers
-    public function career(){
-        return $this->belongsTo(Career::class);
-    }
+    protected $fillable = ['unit_id', 'career_id'];
 }

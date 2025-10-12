@@ -6,20 +6,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScholarshipAcademicPlan extends Model
 {
-    protected $fillable = ['regular', 'start_semester', 'start_date', 'end_date', 'approved_subjects'];
+    protected $table = 'scholarship_academic_plans';
+
+    // Agregamos academic_plan_id y scholarship_id a fillable
+    protected $fillable = [
+        'regular',
+        'start_semester',
+        'start_date',
+        'end_date',
+        'approved_subjects',
+        'academic_plan_id',
+        'scholarship_id'
+    ];
+
     public $timestamps = true;
 
-     protected $casts = [
+    protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
-    // Una ScholarshipAcademicPlan pertenece a un AcademicPlan
-    public function academicPlan(){
+
+    // Relación con AcademicPlan
+    public function academicPlan()
+    {
         return $this->belongsTo(AcademicPlan::class);
     }
-    
-    // Una ScholarshipAcademicPlan pertenece a una Scholarships
-    public function scholarship(){
+
+    // Relación con Scholarship
+    public function scholarship()
+    {
         return $this->belongsTo(Scholarship::class);
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Http\Request; # Clase Request -> Representa la peticion HTTP
 use Illuminate\Support\Facades\Hash; # Permite trabajar con contraseñas encriptadas 
 use Illuminate\Support\Facades\Auth; # Maneja la autenticacion de usuarios
 use Illuminate\Support\Facades\Validator; # Validar datos
+use App\Models\State; #Importo el modelo state
 
 class AuthController extends Controller # Heredar todas las funciones basicas de un controlador en laravel
 {
@@ -29,7 +30,7 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 "string",
                 function ($attribute, $value, $fail) {
                     if (!Genre::where('name', $value)->exists()) {
-                        $fail("El genero seleccionado es invalido.");
+                        $fail("El género seleccionado es inválido.");
                     }
                 }
             ],
@@ -41,29 +42,29 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
         if ($validator->fails()) {
             return response()->json([
                 "success" => false,
-                "message" => "Validation errors",
+                "message" => "Errores de validación",
                 "errors" => $validator->errors(),
             ], 422);
         }
 
         try {
-            // Creamos el usuario
+            // 🔹 Crear usuario
             $user = User::create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
             ]);
 
-            // Obtenemos el id del genero
+            // 🔹 Buscar género
             $genre = Genre::where('name', $request->genero)->first();
             if (!$genre) {
                 return response()->json([
                     "success" => false,
-                    "message" => "Genero invalido"
+                    "message" => "Género inválido."
                 ], 422);
             }
 
-            // Creamos el scholarship con genre_id
+            // 🔹 Crear Scholarship
             $scholarship = Scholarship::create([
                 "user_id" => $user->id,
                 "name" => $request->nombre,
@@ -72,9 +73,16 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 "genre_id" => $genre->id,
             ]);
 
+            // 🔹 Asignar estado "inscripcion_pendiente" por defecto
+            $estadoPendiente = State::where('name', 'inscripcion_pendiente')->first();
+
+            $scholarship->state_id = $estadoPendiente->id;
+            $scholarship->save();
+
+            // 🔹 Respuesta final
             return response()->json([
                 "success" => true,
-                "message" => "User and scholarship registered successfully",
+                "message" => "Usuario y becario registrados correctamente.",
                 "user" => [
                     "id" => $user->id,
                     "name" => $user->name,
@@ -87,14 +95,15 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                     "last_name" => $scholarship->last_name,
                     "cuit" => $scholarship->cuit,
                     "genre_id" => $scholarship->genre_id,
+                    "state_id" => $scholarship->state_id,
                 ],
             ], 201);
         } catch (\Exception $e) {
-            error_log('Error creating user: ' . $e->getMessage());
-            error_log($e->getTraceAsString()); // stack trace completo
+            error_log('Error creando usuario: ' . $e->getMessage());
+            error_log($e->getTraceAsString());
             return response()->json([
                 "success" => false,
-                "message" => "Error creating user",
+                "message" => "Error al crear usuario",
                 "error" => $e->getMessage(),
             ], 500);
         }
@@ -127,7 +136,11 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
         $user = Auth::user()->load('roles');
         $token = $user->createToken("auth_token")->plainTextToken; # Genera el token de acceso personal
 
-        return response()->json([ # Deveria devolver los roles
+        $scholarship = Scholarship::with('state')
+            ->where('user_id', $user->id)
+            ->first();
+
+        return response()->json([
             "success" => true,
             "message" => "User logged in successfully",
             "token" => $token,
@@ -137,13 +150,23 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 "email" => $user->email,
                 "roles" => $user->roles->pluck('name'),
             ],
-        ], 200); # 200 OK -> La operacion tuvo exito
+            "scholarship" => $scholarship ? [
+                "id" => $scholarship->id,
+                "name" => $scholarship->name,
+                "last_name" => $scholarship->last_name,
+                "state" => $scholarship->state ? $scholarship->state->name : null,
+            ] : null,
+        ], 200);
     }
 
     // Profile (user)
     public function profile(Request $request)
     {
         $user = $request->user()->load('roles');
+        $scholarship = Scholarship::with('state')
+            ->where('user_id', $user->id)
+            ->first();
+
         return response()->json([
             "success" => true,
             "message" => "Authenticated user data",
@@ -153,7 +176,13 @@ class AuthController extends Controller # Heredar todas las funciones basicas de
                 "email" => $user->email,
                 "roles" => $user->roles->pluck('name'),
             ],
-        ], 200); # 200 OK -> La operacion tuvo exito
+            "scholarship" => $scholarship ? [
+                "id" => $scholarship->id,
+                "name" => $scholarship->name,
+                "last_name" => $scholarship->last_name,
+                "state" => $scholarship->state ? $scholarship->state->name : null,
+            ] : null,
+        ], 200);
     }
 
     // Logout Api ()

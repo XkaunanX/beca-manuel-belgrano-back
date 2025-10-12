@@ -8,6 +8,8 @@ class Registration extends Model
 {
     // Campos que se pueden asignar masivamente
     protected $fillable = [
+        'user_id',
+        'call_id',
         'approved',
     ];
 

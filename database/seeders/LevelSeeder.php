@@ -1,25 +1,20 @@
 <?php
-
 namespace Database\Seeders;
-use App\Models\Level;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
+use App\Models\Level;
 
 class LevelSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $levels = [
-            'Universitario',
-            'Tecnicatura Universitaria',
-            'Tecnicatura Terciaria'
+            ['name' => 'Grado', 'description' => 'Nivel de grado universitario'],
+            ['name' => 'Posgrado', 'description' => 'Nivel de posgrado'],
         ];
 
-        foreach ($levels as $levelName) {
-            Level::firstOrCreate(['name' => $levelName]);
+        foreach ($levels as $level) {
+            Level::updateOrCreate(['name' => $level['name']], $level);
         }
     }
 }

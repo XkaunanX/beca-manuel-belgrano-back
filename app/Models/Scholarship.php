@@ -6,77 +6,91 @@ use Illuminate\Database\Eloquent\Model;
 
 class Scholarship extends Model
 {
-    
-    protected $fillable = ['user_id', 'genre_id', 'name', 'last_name', 'date_birth', 'cuil', 'cuit', 'children', 'social_coverage'];
+    protected $fillable = [
+        'user_id',
+        'genre_id',
+        'name',
+        'last_name',
+        'date_birth',
+        'cuil',
+        'cuit',
+        'children',
+        'social_coverage',
+        'state_id',
+        'civil_status_id',
+        'nationality_id',
+        'vulnerable_group_id',
+        'bank_branch_id'
+    ];
 
-    // Un Scholarship tiene solo un User
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
-
-     protected $casts = [
+    protected $casts = [
         'date_birth' => 'datetime',
     ];
 
-    // Un Scholarship puede tener muchas ScolarshipAcademicPlan
-    public function scholarshipAcademicPlans(){
+    // Relaciones
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scholarshipAcademicPlans()
+    {
         return $this->hasMany(ScholarshipAcademicPlan::class);
     }
 
-    // Un Scholarship puede tener muchos Services
-    public function services(){
+    public function services()
+    {
         return $this->hasMany(Service::class);
     }
 
-    // Un scolarship puede tener muchos jobs
-    public function Employments(){
+    public function employments()
+    {
         return $this->hasMany(Employment::class);
-    }   
-    // Un Scolarship se relaciona con un unico Gender
+    }
+
     public function gender()
     {
-        return $this->belongsTo(Genre::class);
+        return $this->belongsTo(Genre::class, 'genre_id');
     }
 
-    //Un Scolarship tiene una Nacionalidad
     public function nationality()
     {
-        return $this->belongsTo(Nationality::class);
+        return $this->belongsTo(Nationality::class, 'nationality_id');
     }
-    
-    // Un Scolarship tiene un unico CivilStatus
+
     public function civilStatus()
     {
-        return $this->belongsTo(CivilStatus::class);
+        return $this->belongsTo(CivilStatus::class, 'civil_status_id');
     }
 
-    // Un scolarship tiene un VulnerableGroups
     public function vulnerableGroup()
     {
-        return $this->belongsTo(VulnerableGroup::class);
+        return $this->belongsTo(VulnerableGroup::class, 'vulnerable_group_id');
     }
 
-    // Un Scolarship tiene muchos Payment
     public function scholarshipPayments()
     {
         return $this->hasMany(Payment::class);
-    }   
+    }
 
-    // Un scolarship tiene un BankBranch
     public function bankBranch()
     {
-         return $this->belongsTo(BankBranch::class);
+        return $this->belongsTo(BankBranch::class, 'bank_branch_id');
     }
 
-    // Un Scolarship tiene muchos Assets
     public function assets()
     {
-        return $this->hasMany(Asset::class);    
+        return $this->hasMany(Asset::class);
     }
-    
-    //Un scolarship tiene muchos FamilyMembers
+
     public function familyMembers()
     {
         return $this->hasMany(FamilyMember::class);
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id');
     }
 }

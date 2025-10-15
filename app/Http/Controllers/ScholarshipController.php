@@ -3,114 +3,99 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use App\Models\Scholarship;
-use App\Models\ScholarshipAcademicPlan;
-use App\Models\Call;
-use App\Models\Registration;
-use App\Models\CivilStatus;
-use App\Models\Nationality;
-use App\Models\VulnerableGroup;
-use App\Models\State;
+use Illuminate\Support\Facades\Log;  // Para logs detallados
 
-class RegistrationController extends Controller
+class ScholarshipController extends Controller
 {
     /**
-     * Almacena una nueva inscripción del usuario autenticado.
-     * Actualiza los datos del Scholarship y asigna el estado "inscripcion_pendiente".
+     * Devuelve los datos personales del usuario autenticado.
+     * Si algún dato no está disponible, se devuelve "Pendiente de completar".
+     * Incluye manejo de errores y logs para depuración.
      */
-    public function store(Request $request)
+    public function getMyScholarData(Request $request)
     {
-        // ✅ Validación de campos
-        $validated = $request->validate([
-            'nombre'              => 'required|string|max:255',
-            'apellido'            => 'required|string|max:255',
-            'fechaNacimiento'     => 'required|date',
-            'estadoCivil'         => 'required|string',
-            'nacionalidad'        => 'required|string',
-            'cantidadHijos'       => 'required|integer|min:0',
-            'grupoPrioritario'    => 'required|string',
-            'academic_plan_id'    => 'required|integer|exists:academic_plans,id',
-            'bank_branch_id'      => 'required|integer|exists:bank_branches,id',
-        ]);
+        try {
+            // Obtenemos el usuario autenticado (Laravel Sanctum)
+            $user = $request->user();
 
-        // ✅ Usuario autenticado
-        $user = auth()->user();
+            Log::info('Intentando obtener datos para usuario ID: ' . ($user ? $user->id : 'No autenticado'));
 
-        if (!$user) {
-            return response()->json(['message' => 'Usuario no autenticado.'], 401);
+            if (!$user) {
+                Log::error('Error: Usuario no autenticado');
+                return response()->json([
+                    'error' => 'Usuario no autenticado',
+                    'details' => 'No se encontró usuario en la request.'
+                ], 401);
+            }
+
+            // Inicializamos con datos base del usuario (usando campos del esquema users, asumiendo)
+            $data = [
+                'nombre' => $user->name ?? 'Pendiente de completar',
+                'apellido' => $user->last_name ?? 'Pendiente de completar',  // Si existe en users
+                'dni' => $user->dni ?? 'Pendiente de completar',  // Verifica si existe
+                'fecha_nacimiento' => $user->birth_date ?? 'Pendiente de completar',
+                'email' => $user->email ?? 'Pendiente de completar',
+            ];
+
+            Log::info('Datos iniciales del usuario: ' . json_encode($data));
+
+            // Buscamos la scholarship del usuario con eager loading de relaciones
+            if (!method_exists($user, 'scholarship')) {
+                Log::error('Error: Relación scholarship no definida en el modelo User');
+                return response()->json([
+                    'error' => 'Error interno: Relación no configurada',
+                    'details' => 'Verifica la relación en App\Models\User.'
+                ], 500);
+            }
+
+            $scholarship = $user->scholarship()->with(['user', 'nationality'])->first();
+
+            if (!$scholarship) {
+                Log::warning('No se encontró beca para usuario ID: ' . $user->id);
+                return response()->json([
+                    'error' => 'No se encontró beca para este usuario.',
+                    'details' => 'Verifica si el usuario tiene una beca asociada.'
+                ], 404);
+            }
+
+            Log::info('Beca encontrada para usuario ID: ' . $user->id);
+
+            // Accedemos a datos de la relación user (email del usuario asociado)
+            if (!isset($scholarship->user)) {
+                Log::warning('Relación user en scholarship no cargada para usuario ID: ' . $user->id);
+            }
+            $userData = $scholarship->user ?? null;
+
+            // Override con datos de la scholarship y relaciones si existen
+            // Usamos campos del esquema scholarships (cuil, cuit, etc.)
+            $data['nombre'] = $scholarship->name ?? $data['nombre'];
+            $data['apellido'] = $scholarship->last_name ?? $data['apellido'];
+            $data['dni'] = ($scholarship->cuil ?? $scholarship->cuit) ?? $data['dni'];  // Prioridad CUIL/CUIT como en el esquema
+            $data['fecha_nacimiento'] = $scholarship->date_birth?->format('Y-m-d') ?? $data['fecha_nacimiento'];
+            $data['email'] = $userData?->email ?? $data['email'];  // De la relación
+
+            // Agregamos campos adicionales del esquema si son relevantes (ej. genre_id, si existe)
+            if (isset($scholarship->genre_id)) {
+                $data['genre_id'] = $scholarship->genre_id ?? 'Pendiente de completar';
+            }
+
+            Log::info('Datos finales de la beca: ' . json_encode($data));
+
+            return response()->json($data);  // Respuesta exitosa
+        } catch (\Exception $e) {
+            // Captura cualquier excepción y loguea detalles
+            Log::error('Error en getMyScholarData: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $request->user()?->id ?? 'No autenticado',
+                'exception_code' => $e->getCode(),
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor',
+                'details' => $e->getMessage(),  // Solo en dev; quita en prod
+                'code' => $e->getCode(),
+            ], 500);
         }
-
-        // ✅ Becario asociado al usuario
-        $scholarship = Scholarship::where('user_id', $user->id)->firstOrFail();
-
-        // ✅ Buscar el estado "inscripcion_pendiente" (creado previamente en la tabla states)
-        $stateId = State::where('name', 'inscripcion_pendiente')->value('id');
-
-        // ✅ Actualizar datos del becario
-        $scholarship->update([
-            'name'                => $validated['nombre'],
-            'last_name'           => $validated['apellido'],
-            'date_birth'          => $validated['fechaNacimiento'],
-            'civil_status_id'     => CivilStatus::where('name', $validated['estadoCivil'])->value('id'),
-            'nationality_id'      => Nationality::where('name', $validated['nacionalidad'])->value('id'),
-            'children'            => $validated['cantidadHijos'],
-            'vulnerable_group_id' => VulnerableGroup::where('name', $validated['grupoPrioritario'])->value('id'),
-            'bank_branch_id'      => $validated['bank_branch_id'],
-            'state_id'            => $stateId, // 🔥 Asignamos automáticamente el estado "inscripcion_pendiente"
-        ]);
-
-        // ✅ Registrar el plan académico del becario
-        ScholarshipAcademicPlan::create([
-            'scholarship_id'     => $scholarship->id,
-            'academic_plan_id'   => $validated['academic_plan_id'],
-            'regular'            => $request->boolean('regular', false),
-            'start_semester'     => $request->input('start_semester'),
-            'start_date'         => $request->input('start_date', now()),
-            'end_date'           => $request->input('end_date'),
-            'approved_subjects'  => $request->input('approved_subjects', 0),
-        ]);
-
-        // ✅ Buscar convocatoria activa según fecha actual
-        $today = Carbon::today()->toDateString();
-
-        $calls = Call::where(function ($q) use ($today) {
-                $q->whereNull('enrollment_start_date')
-                  ->orWhereDate('enrollment_start_date', '<=', $today);
-            })
-            ->where(function ($q) use ($today) {
-                $q->whereNull('enrollment_end_date')
-                  ->orWhereDate('enrollment_end_date', '>=', $today);
-            })
-            ->get();
-
-        // Validaciones sobre la convocatoria
-        if ($calls->count() === 0) {
-            return response()->json(['message' => 'No hay ninguna convocatoria abierta para inscribirse.'], 422);
-        }
-
-        if ($calls->count() > 1) {
-            return response()->json(['message' => 'Hay más de una convocatoria activa. Contacte al administrador.'], 422);
-        }
-
-        $call = $calls->first();
-
-        // ✅ Evitar inscripciones duplicadas
-        $alreadyRegistered = Registration::where('user_id', $user->id)
-            ->where('call_id', $call->id)
-            ->exists();
-
-        if ($alreadyRegistered) {
-            return response()->json(['message' => 'El usuario ya está inscripto en la convocatoria actual.'], 422);
-        }
-
-        // ✅ Crear inscripción
-        Registration::create([
-            'user_id'  => $user->id,
-            'call_id'  => $call->id,
-            'approved' => $request->boolean('approved', false),
-        ]);
-
-        return response()->json(['message' => 'Inscripción guardada correctamente.'], 201);
     }
 }

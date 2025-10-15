@@ -14,6 +14,12 @@ use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegistrationControllerController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\AcademicPlanController;
+use App\Http\Controllers\BankBranchController;
+use App\Http\Controllers\CareerController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\UnitCareerController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -36,4 +42,11 @@ Route::get('/nationalities', [NationalityController::class, 'index']);
 Route::get('/civil-statuses', [CivilStatusController::class, 'index']);
 Route::get('/vulnerable-groups', [VulnerableGroupController::class, 'index']);
 Route::get('/provinces', [ProvinceController::class, 'index']);
+Route::get('/academic-plans', [AcademicPlanController::class, 'index']);
+Route::get('/bank-branches', [BankBranchController::class, 'index']);
+Route::get('/careers', [CareerController::class, 'index']);
 Route::get('/institutions', [InstitutionController::class, 'index']);
+Route::get('/levels', [LevelController::class, 'index']);
+Route::get('/units', [UnitController::class, 'index']);
+Route::get('/unit-career', [UnitCareerController::class, 'index']);
+
